@@ -1,82 +1,55 @@
 #pragma once
+#include <string>
+#include <functional>
 
+class Tessellator;
+#include "../../util/TilePos.h"
+#include "../../tile/Tile.h"
+#include "../../level/TileSource.h"
+#include "../../util/Vec3.h"
 #include "texture/TextureUVCoordinateSet.h"
 #include "../../util/AABB.h"
-#include "../../tile/Tile.h"
-#include <cmath>
+#include "../../util/DataID.h"
 
-class TileSource;
-#include "Tessellator.h"
-class TilePos;
-
-const float PI = 3.14159;
-
-// Size : 72740
-class TileTessellator
-{
+class TileTessellator {
 public:
-	static TileTessellator *instance;
 
-public:
-	char filler1[4];				// 0
-	TileSource *tileSource;			// 4
-	TextureUVCoordinateSet forcedUV;// 8
-	bool useForcedUV;				// 40
-	char filler2[623];				// 41
-	Tessellator* tess;				// 664
-	AABB bounds;					// 668
-
-public:
-	bool tessellateInWorld(Tile *, const TilePos &, bool);
-	void tessellateBlockInWorld(Tile *, const TilePos &);
-	bool tessellateCrossInWorld(Tile*, const TilePos&, bool);
-	bool tessellateCrossTexture(Tile*, unsigned char, float, float, float, bool);
-	uint getLightColor(const TilePos &);
-	void tex1(uint);
-	bool canRender(int);
+    bool forceOpaque; // 0
+    bool mirror; // 1
+    TileSource* tileSource; // 4
+    TextureUVCoordinateSet forcedUV; // 8
+    bool useForcedUV; // 40
+    char filler[88]; // 44
+    int rotBottom; // 132
+    int rotTop; // 136
+    int rotEast; // 140
+    int rotWest; // 144
+    int rotNorth; // 148
+    int rotSouth; // 152
+    char filler1[512]; // 156
+    Tessellator* tess; // 668
+    AABB bounds; // 672
 	
+	bool tessellateInWorld(Tile*, const TilePos&, unsigned char, bool);
+	bool tessellateBlockInWorld(Tile*, const TilePos&);
+	bool tessellateRowTexture(Tile*, unsigned char, float, float, float);
+	bool tessellateRowInWorld(Tile*, const TilePos&, unsigned char);
+	bool tessellateCrossPolyInWorld(Tile*, TilePos const&, unsigned char, bool);
+	bool tessellateCrossPolyTexture(TextureUVCoordinateSet const&, Vec3 const&, bool, Tile*);
+	bool isSolidRender(Tile const*);
+	bool tessellateCrossInWorld(Tile*, const TilePos&, unsigned char, bool);
+	bool tessellateCrossTexture(Tile*, unsigned char, float, float, float, bool);
+	bool tessellateCrossTexture(TextureUVCoordinateSet const&, float, float, float, bool, Tile*, float);
+	void renderFaceUp(Tile*, const Vec3&, const TextureUVCoordinateSet&);
+    void tessellateTorch(Tile*, float, float, float, float, float);
+    void tex1(unsigned int);
+    DataID getData(const TilePos&) const;
+    unsigned int getLightColor(const TilePos&);
+
 	void setRenderBounds(float x1, float y1, float z1, float x2, float y2, float z2) {
 		bounds = AABB(x1, y1, z1, x2, y2, z2);
 	}
 	
-	bool isOn(TileSource* ts, Tile* tile, int x, int y, int z) {
-		if(ts->getTilePtr(x, y, z) == tile) return true;
-	}
-	
-	bool tessellatePipeInWorld(Tile* tile, TilePos const& pos){
-		useForcedUV = true;
-		int x = pos.x, y = pos.y, z = pos.z;
-		
-		forcedUV = tile->getTextureUVCoordinateSet("stone",0);
-		
-		setRenderBounds(0.35, 0.35, 0.35, 0.65, 0.65, 0.65);
-		tessellateBlockInWorld(tile, pos);
-		
-		if(tileSource->getTilePtr(x,y+1,z) == tile){
-			setRenderBounds(0.40, 0.60, 0.40, 0.60, 1.0, 0.60);
-			tessellateBlockInWorld(tile, pos);
-		}
-		if(tileSource->getTilePtr(x,y-1,z) == tile){
-			setRenderBounds(0.40, 0.0, 0.40, 0.60, 0.40, 0.60);
-			tessellateBlockInWorld(tile, pos);
-		}
-		if(tileSource->getTilePtr(x+1,y,z) == tile){
-			setRenderBounds(0.60, 0.40, 0.40, 1.0, 0.60, 0.60);
-			tessellateBlockInWorld(tile, pos);
-		}
-		if(tileSource->getTilePtr(x-1,y,z) == tile){
-			setRenderBounds(0.0, 0.40, 0.40, 0.40, 0.60, 0.60);
-			tessellateBlockInWorld(tile, pos);
-		}
-		if(tileSource->getTilePtr(x,y,z+1) == tile){
-			setRenderBounds(0.40, 0.40, 0.40, 0.60, 0.60, 1.0);
-			tessellateBlockInWorld(tile, pos);
-		}
-		if(tileSource->getTilePtr(x,y,z-1) == tile){
-			setRenderBounds(0.40, 0.40, 0.0, 0.60, 0.60, 0.40);
-			tessellateBlockInWorld(tile, pos);
-		}
-		
-		useForcedUV = false;
-	}
+	/*render functions*/
+	bool tessellatePipeInWorld(Tile*, TilePos const&);
 };

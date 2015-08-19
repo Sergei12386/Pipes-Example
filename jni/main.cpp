@@ -16,6 +16,7 @@ bool TileTessellator$tessellateInWorld(TileTessellator* self, Tile* tile, const 
 			break;
 		default:
 			return _TileTessellator$tessellateInWorld(self, tile, pos, b);
+			break;
 	}
 }
 
@@ -24,10 +25,8 @@ void (*_Tile$initTiles)();
 void Tile$initTiles() {
 	_Tile$initTiles();
 	Tile* pipe = new Tile(240, "stone", &Material::stone);
-	pipe->init();
 	pipe->setNameId("pipe");
-	pipe->setShape(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
-	
+	Tile::tiles[240] = pipe;
 	Tile::solid[240] = false;
 	Tile::lightBlock[240] = 0;
 	new TileItem(240 - 0x100);
