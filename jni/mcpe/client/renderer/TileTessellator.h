@@ -41,13 +41,21 @@ public:
 	bool tessellateCrossTexture(Tile*, unsigned char, float, float, float, bool);
 	bool tessellateCrossTexture(TextureUVCoordinateSet const&, float, float, float, bool, Tile*, float);
 	void renderFaceUp(Tile*, const Vec3&, const TextureUVCoordinateSet&);
-    void tessellateTorch(Tile*, float, float, float, float, float);
-    void tex1(unsigned int);
-    DataID getData(const TilePos&) const;
-    unsigned int getLightColor(const TilePos&);
-
+    	void tessellateTorch(Tile*, float, float, float, float, float);
+    	void tex1(unsigned int);
+    	DataID getData(const TilePos&) const;
+    	unsigned int getLightColor(const TilePos&);
+	
 	void setRenderBounds(float x1, float y1, float z1, float x2, float y2, float z2) {
 		bounds = AABB(x1, y1, z1, x2, y2, z2);
+	}
+	
+	void face4(TliePos const& pos, Vec3 v1, Vec3, v2, Vec3 v3, Vec3 v4, std::vector<float> tex){
+		int x = pos.x, y = pos.y, z = pos.z;
+		//tess->color(255, 255, 255, 1);
+		//tess->vertexUV(x + v1.x, y + v1.y, z + v1.z, tex[0], tex[1]);
+		//tess->vertexUV(x, y, z, tex[0], tex[1]);
+		// I will add all this later, I am lazy
 	}
 	
 	/*render functions*/
